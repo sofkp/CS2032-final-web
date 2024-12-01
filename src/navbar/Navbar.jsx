@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUser, FaSearch, FaShoppingCart, FaClipboardList, FaCreditCard } from 'react-icons/fa';
+import { FaSignOutAlt, FaSearch, FaShoppingCart, FaCreditCard } from 'react-icons/fa';
 import {
   StyledNavbar,
   StyledNavLink,
@@ -60,9 +60,9 @@ function Navbarr() {
           Payments
         </StyledNavLink>
 
-        <StyledNavLink href="/user">
-          <FaUser size={22} style={{ marginRight: '8px' }} />
-          User
+        <StyledNavLink href="/">
+          <FaSignOutAlt size={22} style={{ marginRight: '8px' }} />
+          Exit
         </StyledNavLink>
 
       </StyledContainer>
