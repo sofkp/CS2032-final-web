@@ -16,71 +16,35 @@ import {
 } from "./Orden-style";
 
 const Orden = () => {
-  const { tenantID, inventoryID } = useTenant();
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["orders"],
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['orders'],
     queryFn: async () => {
-      const response = await fetch("https://example.com/orders");
+      const response = await fetch(
+        "https://sw2pn8sas4.execute-api.us-east-1.amazonaws.com/test/orden/list",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Add token if required
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch orders");
+      }
       return response.json();
     },
   });
 
-  const searchProducts = async ({ product_id }) => {
-    const response = await fetch(
-      `https://8y2hkh9bpk.execute-api.us-east-1.amazonaws.com/test/product/select`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify({
-          tenant_id: tenantID,
-          producto_id: product_id,
-        }),
-      }
-    );
-    return response.json();
-  };
-
-  // if (isLoading) return <div>Loading...</div>;
-
-  const orders = [
-    {
-      tenant_id: "wong",
-      order_id: "O10001",
-      user_id: "user9695@gmail.com",
-      user_info: {
-        info: "Info del user#user9695@gmail.com#",
-      },
-      products: [
-        {
-          product_brand: "Samsung",
-          product_id: "001",
-          product_info: {
-            description:
-              "Smartphone con cámara de alta resolución y rendimiento excepcional.",
-          },
-          product_name: "Galaxy S23 Ultra",
-          product_price: 12000,
-          tenant_id: "uwu",
-        },
-      ],
-      inventory_id: "I6484",
-    },
-  ];
-
-  useEffect(() => {
-    searchProducts({ product_id: "002" });
-  }, [orders]);
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading orders: {error.message}</div>;
 
   return (
     <Container>
       <Title>Orders</Title>
       <OrdersContainer>
-        {orders.map((order) => (
-          <OrderCard key={order.order_id}>
+        {data.body && data.body.length > 0 ? (
+          data.body.map((order) => (
+            <OrderCard key={order.order_id}>
             <OrderInfo>
               <OrderUser>{order.user_id}</OrderUser>
               <div>Order ID: {order.order_id}</div>
@@ -109,7 +73,10 @@ const Orden = () => {
               </details>
             </OrderInfo>
           </OrderCard>
-        ))}
+          ))
+        ) : (
+          <div>No orders found</div>
+        )}
       </OrdersContainer>
     </Container>
   );

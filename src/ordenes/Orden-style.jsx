@@ -95,3 +95,4 @@ export const LoadingMessage = styled.div`
   color: #82204A;
   font-weight: bold;
 `;
+

@@ -30,7 +30,8 @@ const Products = () => {
         },
       }
     );
-    return response.json();
+    const data = await response.json();
+    return data;
   };
 
   const fetchStock = async (productID) => {
@@ -84,7 +85,7 @@ const Products = () => {
   useEffect(() => {
     if (data?.pages) {
       const fetchAllStocks = async () => {
-        const allProducts = data.pages.flatMap((page) => page.body);
+        const allProducts = data.pages.flatMap((page) => Array.isArray(page.body) ? page.body : []);
         const stockPromises = allProducts.map(async (product) => {
           const stock = await fetchStock(product.product_id);
           return { id: product.product_id, stock };
@@ -112,27 +113,22 @@ const Products = () => {
   return (
     <Container>
       <ProductGrid>
-        {data?.pages.map((page) =>
-          page.body.map((product) => (
-            <a
-              key={product.product_id}
-              onClick={() => handleClick(product)}
-            >
-              <ProductCard key={product.product_id}>
-                <ProductImage
-                  src={product.image}
-                  alt={product.name}
-                  loading="lazy"
-                />
-                <ProductInfo>
-                  <ProductName>{product.product_name}</ProductName>
-                  <ProductPrice>${product.product_price}</ProductPrice>
-                  <ProductStock>
-                    Stock: {stockInfo[product.product_id] || "Cargando..."}
-                  </ProductStock>
-                </ProductInfo>
-              </ProductCard>
-            </a>
+        {data?.pages.map((page, pageIndex) =>
+          (Array.isArray(page.body) ? page.body : []).map((product) => (
+            <ProductCard key={`${product.product_id}-${pageIndex}`} onClick={() => handleClick(product)}>
+              <ProductImage
+                src={product.image}
+                alt={product.name}
+                loading="lazy"
+              />
+              <ProductInfo>
+                <ProductName>{product.product_name}</ProductName>
+                <ProductPrice>${product.product_price}</ProductPrice>
+                <ProductStock>
+                  Stock: {stockInfo[product.product_id] || "Cargando..."}
+                </ProductStock>
+              </ProductInfo>
+            </ProductCard>
           ))
         )}
       </ProductGrid>
