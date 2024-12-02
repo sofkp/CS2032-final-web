@@ -3,49 +3,6 @@ import { Container } from "./Producto-style";
 import { useLocation } from "react-router-dom";
 import { Card } from "react-bootstrap";
 
-const reviews = [
-  {
-    tenant_id: "wong",
-    product_id: "P18373",
-    review_id: "R1",
-    user_id: "user5885@gmail.com",
-    comentario: "I would not buy it again, it has defects.",
-    stars: 5,
-  },
-  {
-    tenant_id: "plaza_vea",
-    product_id: "P18384",
-    review_id: "R2",
-    user_id: "user7622@gmail.com",
-    comentario: "Excellent product, highly recommended.",
-    stars: 2,
-  },
-  {
-    tenant_id: "wong",
-    product_id: "P10563",
-    review_id: "R3",
-    user_id: "user9329@gmail.com",
-    comentario: "Good quality product, would buy again.",
-    stars: 1,
-  },
-  {
-    tenant_id: "metro",
-    product_id: "P13851",
-    review_id: "R4",
-    user_id: "user8444@gmail.com",
-    comentario: "I would not buy it again, it has defects.",
-    stars: 4,
-  },
-  {
-    tenant_id: "tottus",
-    product_id: "P19265",
-    review_id: "R5",
-    user_id: "user4325@gmail.com",
-    comentario: "The product met my expectations.",
-    stars: 5,
-  },
-];
-
 const Product = () => {
   const location = useLocation();
 
@@ -55,31 +12,60 @@ const Product = () => {
 
   console.log(product);
 
+  const renderSpecifications = (specifications) => (
+    <table>
+      <thead>
+        <tr>
+          <th>Specification</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        {Object.entries(specifications).map(([key, value]) => (
+          <tr key={key}>
+            <td>{key}</td>
+            <td>
+              {typeof value === "string" 
+                ? value // Mostrar directamente si es un string
+                : Object.entries(value).map(([subKey, subValue]) => ( // Manejar objetos anidados
+                    <div key={subKey}>
+                      <strong>{subKey}:</strong> {subValue}
+                    </div>
+                  ))
+              }
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+  
+
+  const renderFeatures = (features) => (
+    <ul>
+      {features.map((feature, index) => (
+        <li key={index}>
+          {typeof feature === "string" ? feature : feature.feature}
+        </li>
+      ))}
+    </ul>
+  );
+
   return (
     <div>
       <Container>
+        <img src={product.image} alt={product.product_name} />
         <h1>{product.product_name}</h1>
         <p>{product.product_brand}</p>
         <p>{product.product_price}</p>
-        <img src={product.image} alt={product.product_name} />
+        <p>{product.product_info.description}</p>
+
+        <h2>Specifications</h2>
+        {renderSpecifications(product.product_info.specifications)}
+
+        <h2>Features</h2>
+        {renderFeatures(product.product_info.features)}
       </Container>
-      <div>
-        <h2>Reviews</h2>
-        <div>
-          {reviews.map((review) => (
-            <div key={review.review_id}>
-              <Card>
-                <Card.Body>
-                  <Card.Text>
-                    {review.user_id} - {review.stars} stars
-                  </Card.Text>
-                  <Card.Text>{review.comentario}</Card.Text>
-                </Card.Body>
-              </Card>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
