@@ -7,6 +7,7 @@ import Orders from "./ordenes/Orden";
 import Payments from "./payment/Payment";
 import Inventory from "./inventory/Inventory";
 import NewProduct from "./productos/NuevoProducto";
+import Product from "./productos/Product";
 import { AuthProvider } from "./contexts/AuthContext";
 import './index.css';
 import Navbarr from './navbar/Navbar';
@@ -31,6 +32,7 @@ const MainRoutes = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/inicio" element={<Inicio />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/product" element={<Product />} />
         <Route path="/products/new" element={<NewProduct />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/payments" element={<Payments />} />

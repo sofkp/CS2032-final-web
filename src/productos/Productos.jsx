@@ -12,11 +12,13 @@ import {
   ProductStock,
   LoadingMessage,
 } from "./Producto-style";
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Products = () => {
   const observerTarget = useRef(null);
   const { tenantID, inventoryID } = useTenant();
   const [stockInfo, setStockInfo] = useState({});
+  const navigate = useNavigate();
 
   const fetchProducts = async ({ pageParam = 1 }) => {
     const response = await fetch(
@@ -98,6 +100,11 @@ const Products = () => {
     }
   }, [data, tenantID, inventoryID]);
 
+  const handleClick = (product) => {
+    const encodedProduct = btoa(JSON.stringify(product));
+    navigate(`/product?product=${encodedProduct}`);
+  };
+
   if (status === "loading") return <LoadingMessage>Cargando...</LoadingMessage>;
   if (status === "error")
     return <LoadingMessage>Error cargando productos</LoadingMessage>;
@@ -107,20 +114,25 @@ const Products = () => {
       <ProductGrid>
         {data?.pages.map((page) =>
           page.body.map((product) => (
-            <ProductCard key={product.product_id}>
-              <ProductImage
-                src={product.image}
-                alt={product.name}
-                loading="lazy"
-              />
-              <ProductInfo>
-                <ProductName>{product.product_name}</ProductName>
-                <ProductPrice>${product.product_price}</ProductPrice>
-                <ProductStock>
-                  Stock: {stockInfo[product.product_id] || "Cargando..."}
-                </ProductStock>
-              </ProductInfo>
-            </ProductCard>
+            <a
+              key={product.product_id}
+              onClick={() => handleClick(product)}
+            >
+              <ProductCard key={product.product_id}>
+                <ProductImage
+                  src={product.image}
+                  alt={product.name}
+                  loading="lazy"
+                />
+                <ProductInfo>
+                  <ProductName>{product.product_name}</ProductName>
+                  <ProductPrice>${product.product_price}</ProductPrice>
+                  <ProductStock>
+                    Stock: {stockInfo[product.product_id] || "Cargando..."}
+                  </ProductStock>
+                </ProductInfo>
+              </ProductCard>
+            </a>
           ))
         )}
       </ProductGrid>
